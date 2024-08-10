@@ -43,7 +43,10 @@ public class Personagem {
     @JoinColumn(name = "arma_secundaria_id")
     private Arma armaSecundaria;
 
-    private String armadura;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "armadura_id")
+    private Armadura armadura;
+
     private String religiao;
     private String pet;
 }

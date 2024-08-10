@@ -1,8 +1,10 @@
 package com.rpg.build_rpg.services;
 
+import com.rpg.build_rpg.entities.Armadura;
 import com.rpg.build_rpg.entities.DTOs.PersonagemResponseDTO;
 import com.rpg.build_rpg.entities.Personagem;
 import com.rpg.build_rpg.entities.Arma;
+import com.rpg.build_rpg.repositories.ArmaduraRepository;
 import com.rpg.build_rpg.repositories.PersonagemRepository;
 import com.rpg.build_rpg.repositories.ArmaRepository;
 import com.rpg.build_rpg.entities.enums.Classe;
@@ -25,10 +27,18 @@ public class PersonagemService {
     @Autowired
     private ArmaRepository armaRepository;
 
+    @Autowired
+    private ArmaduraRepository armaduraRepository;
+
     public List<PersonagemResponseDTO> getAllPersonagens() {
         return personagemRepository.findAll().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
+    }
+
+    public Optional<PersonagemResponseDTO> getPersonagemById(UUID id) {
+        Optional<Personagem> personagem = personagemRepository.findById(id);
+        return personagem.map(this::convertToDTO);
     }
 
     public PersonagemResponseDTO createPersonagem(PersonagemResponseDTO personagemDTO) {
@@ -40,10 +50,7 @@ public class PersonagemService {
         return convertToDTO(savedPersonagem);
     }
 
-    public Optional<PersonagemResponseDTO> getPersonagemById(UUID id) {
-        Optional<Personagem> personagem = personagemRepository.findById(id);
-        return personagem.map(this::convertToDTO);
-    }
+
 
     public PersonagemResponseDTO updatePersonagem(UUID id, PersonagemResponseDTO personagemDTO) {
         if (!personagemRepository.existsById(id)) {
@@ -72,7 +79,7 @@ public class PersonagemService {
         dto.setClasse(personagem.getClasse().name());
         dto.setArmaPrincipal(personagem.getArmaPrincipal() != null ? personagem.getArmaPrincipal().getNome() : null);
         dto.setArmaSecundaria(personagem.getArmaSecundaria() != null ? personagem.getArmaSecundaria().getNome() : null);
-        dto.setArmadura(personagem.getArmadura());
+        dto.setArmadura(personagem.getArmadura() != null ? personagem.getArmadura().getNome() : null);
         dto.setReligiao(personagem.getReligiao());
         dto.setPet(personagem.getPet());
         return dto;
@@ -95,7 +102,11 @@ public class PersonagemService {
             if (armaSecundaria.isPresent()) personagem.setArmaSecundaria(armaSecundaria.get());
         }
 
-        personagem.setArmadura(dto.getArmadura());
+        if (dto.getArmadura() != null && !dto.getArmadura().isEmpty()) {
+            Optional<Armadura> armadura = armaduraRepository.findById(UUID.fromString(dto.getArmadura()));
+            if (armadura.isPresent()) personagem.setArmadura(armadura.get());
+        }
+
         personagem.setReligiao(dto.getReligiao());
         personagem.setPet(dto.getPet());
         return personagem;
