@@ -31,4 +31,27 @@ public class ArmaduraService {
         }
         return armaduraRepository.save(armadura);
     }
+
+    public Armadura updateArmadura(UUID id, Armadura armaduraAtualizada) {
+        try {
+            Armadura armadura = getArmaduraById(id)
+                    .orElseThrow(()-> new IllegalArgumentException("Armadura não encontrada!"));
+            armadura.setNome(armaduraAtualizada.getNome());
+            armadura.setTipo(armaduraAtualizada.getTipo());
+            armadura.setDescricao(armaduraAtualizada.getDescricao());
+            armadura.setDefesa(armaduraAtualizada.getDefesa());
+
+            return armaduraRepository.save(armadura);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao atualizar a armadura: " + e.getMessage());
+        }
+    }
+
+    public void deleteArmadura(UUID id){
+        if(armaduraRepository.existsById(id)){
+            armaduraRepository.deleteById(id);
+        } else {
+            throw new IllegalArgumentException("Armadura não encontrada com o id fornecido.");
+        }
+    }
 }
