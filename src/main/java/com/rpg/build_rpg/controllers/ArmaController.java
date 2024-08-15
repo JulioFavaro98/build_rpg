@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/arma")
@@ -22,6 +24,12 @@ public class ArmaController {
         return new ResponseEntity<>(armas, HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Arma> getArmaById(@PathVariable UUID id) {
+        Optional<Arma> arma = armaService.getArmaById(id);
+        return arma.map(ResponseEntity::ok).orElseGet(()-> ResponseEntity.notFound().build());
+    }
+
     @PostMapping
     public ResponseEntity<?> createArma(@RequestBody Arma arma) {
         try {
@@ -29,6 +37,30 @@ public class ArmaController {
             return new ResponseEntity<>(novaArma, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateArma(@PathVariable UUID id, @RequestBody Arma arma) {
+        try {
+            armaService.updateArma(id, arma);
+            return ResponseEntity.ok("Arma Atualizada com Sucesso!");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro: " + e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao atualizar arma: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteArma(@PathVariable UUID id) {
+        try {
+            armaService.deleteArma(id);
+            return ResponseEntity.ok("Arma deletada com SUCESSO!");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro: " + e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao deletar arma: " + e.getMessage());
         }
     }
 }
