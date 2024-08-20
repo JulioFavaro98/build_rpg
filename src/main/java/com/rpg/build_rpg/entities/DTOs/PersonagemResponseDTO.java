@@ -17,6 +17,5 @@ public class PersonagemResponseDTO {
     private String armaPrincipal;
     private String armaSecundaria;
     private String armadura;
-    private String religiao;
     private String pet;
 }

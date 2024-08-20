@@ -4,12 +4,14 @@ import com.rpg.build_rpg.entities.Armadura;
 import com.rpg.build_rpg.entities.DTOs.PersonagemResponseDTO;
 import com.rpg.build_rpg.entities.Personagem;
 import com.rpg.build_rpg.entities.Arma;
+import com.rpg.build_rpg.entities.Pet;
 import com.rpg.build_rpg.repositories.ArmaduraRepository;
 import com.rpg.build_rpg.repositories.PersonagemRepository;
 import com.rpg.build_rpg.repositories.ArmaRepository;
 import com.rpg.build_rpg.entities.enums.Classe;
 import com.rpg.build_rpg.entities.enums.Raca;
 import com.rpg.build_rpg.entities.enums.Sexo;
+import com.rpg.build_rpg.repositories.PetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +31,9 @@ public class PersonagemService {
 
     @Autowired
     private ArmaduraRepository armaduraRepository;
+
+    @Autowired
+    private PetRepository petRepository;
 
     public List<PersonagemResponseDTO> getAllPersonagens() {
         return personagemRepository.findAll().stream()
@@ -80,8 +85,7 @@ public class PersonagemService {
         dto.setArmaPrincipal(personagem.getArmaPrincipal() != null ? personagem.getArmaPrincipal().getNome() : null);
         dto.setArmaSecundaria(personagem.getArmaSecundaria() != null ? personagem.getArmaSecundaria().getNome() : null);
         dto.setArmadura(personagem.getArmadura() != null ? personagem.getArmadura().getNome() : null);
-        dto.setReligiao(personagem.getReligiao());
-        dto.setPet(personagem.getPet());
+        dto.setPet(personagem.getPet() != null ? personagem.getPet().getNome() : null);
         return dto;
     }
 
@@ -107,8 +111,11 @@ public class PersonagemService {
             if (armadura.isPresent()) personagem.setArmadura(armadura.get());
         }
 
-        personagem.setReligiao(dto.getReligiao());
-        personagem.setPet(dto.getPet());
+        if (dto.getPet() != null && !dto.getPet().isEmpty()) {
+            Optional<Pet> pet = petRepository.findById(UUID.fromString(dto.getPet()));
+            if (pet.isPresent()) personagem.setPet(pet.get());
+        }
+
         return personagem;
     }
 }
