@@ -1,5 +1,6 @@
 package com.rpg.build_rpg.controllers;
 
+import com.rpg.build_rpg.entities.Arma;
 import com.rpg.build_rpg.entities.Pet;
 import com.rpg.build_rpg.services.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class PetController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Pet> getPetById(@PathVariable UUID id){
-        Optional<Pet> pet = petService.findPetById(id);
+        Optional<Pet> pet = petService.getPetById(id);
         return pet.map(ResponseEntity::ok).orElseGet(()-> ResponseEntity.notFound().build());
     }
 
@@ -37,6 +38,30 @@ public class PetController {
             return new ResponseEntity<>(novoPet, HttpStatus.CREATED);
         } catch (IllegalArgumentException e ) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updatePet(@PathVariable UUID id, @RequestBody Pet pet) {
+        try {
+            petService.updatePet(id, pet);
+            return ResponseEntity.ok("Pet Atualizado com Sucesso!");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro: " + e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao atualizar pet: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletePet(@PathVariable UUID id){
+        try {
+            petService.deletePet(id);
+            return ResponseEntity.ok("Pet deletado com SUCESSO!");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro: " + e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao deletar pet: " + e.getMessage());
         }
     }
 }
