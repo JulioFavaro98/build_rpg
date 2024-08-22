@@ -77,7 +77,6 @@ public class PersonagemService {
 
     private PersonagemResponseDTO convertToDTO(Personagem personagem) {
         PersonagemResponseDTO dto = new PersonagemResponseDTO();
-        dto.setId(personagem.getId());
         dto.setNome(personagem.getNome());
         dto.setSexo(personagem.getSexo().name());
         dto.setRaca(personagem.getRaca().name());

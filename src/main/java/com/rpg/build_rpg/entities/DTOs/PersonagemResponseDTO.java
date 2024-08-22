@@ -9,7 +9,6 @@ import java.util.UUID;
 @Setter
 public class PersonagemResponseDTO {
 
-    private UUID id;
     private String nome;
     private String sexo;
     private String raca;

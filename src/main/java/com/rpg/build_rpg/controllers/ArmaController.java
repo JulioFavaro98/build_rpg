@@ -21,46 +21,31 @@ public class ArmaController {
     @GetMapping("/armas")
     public ResponseEntity<List<Arma>> getAllArmas() {
         List<Arma> armas = armaService.getAllArmas();
-        return new ResponseEntity<>(armas, HttpStatus.OK);
+        return ResponseEntity.ok(armas);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Arma> getArmaById(@PathVariable UUID id) {
         Optional<Arma> arma = armaService.getArmaById(id);
-        return arma.map(ResponseEntity::ok).orElseGet(()-> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(arma.get());
     }
 
     @PostMapping
-    public ResponseEntity<?> createArma(@RequestBody Arma arma) {
-        try {
-            Arma novaArma = armaService.createArma(arma);
-            return new ResponseEntity<>(novaArma, HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<Arma> createArma(@RequestBody Arma arma) {
+        Arma novaArma = armaService.createArma(arma);
+        return new ResponseEntity<>(novaArma, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateArma(@PathVariable UUID id, @RequestBody Arma arma) {
-        try {
-            armaService.updateArma(id, arma);
-            return ResponseEntity.ok("Arma Atualizada com Sucesso!");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro: " + e.getMessage());
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao atualizar arma: " + e.getMessage());
-        }
+    public ResponseEntity<Arma> updateArma(@PathVariable UUID id, @RequestBody Arma arma) {
+        Arma armaAtualizada = armaService.updateArma(id, arma);
+        return ResponseEntity.ok(armaAtualizada);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteArma(@PathVariable UUID id) {
-        try {
-            armaService.deleteArma(id);
-            return ResponseEntity.ok("Arma deletada com SUCESSO!");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro: " + e.getMessage());
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao deletar arma: " + e.getMessage());
-        }
+    public ResponseEntity<Void> deleteArma(@PathVariable UUID id) {
+        armaService.deleteArma(id);
+        return ResponseEntity.noContent().build();
+
     }
 }

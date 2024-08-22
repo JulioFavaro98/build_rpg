@@ -21,24 +21,19 @@ public class PersonagemController {
     @GetMapping("/personagens")
     public ResponseEntity<List<PersonagemResponseDTO>> getAllPersonagens() {
         List<PersonagemResponseDTO> personagens = personagemService.getAllPersonagens();
-        return new ResponseEntity<>(personagens, HttpStatus.OK);
+        return ResponseEntity.ok(personagens);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<PersonagemResponseDTO> getPersonagemById(@PathVariable UUID id) {
         Optional<PersonagemResponseDTO> personagem = personagemService.getPersonagemById(id);
-        return personagem.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(personagem.get());
     }
 
     @PostMapping
-    public ResponseEntity<?> createPersonagem(@RequestBody PersonagemResponseDTO personagemDTO) {
-        try {
-            PersonagemResponseDTO savedPersonagem = personagemService.createPersonagem(personagemDTO);
-            return new ResponseEntity<>(savedPersonagem, HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<PersonagemResponseDTO> createPersonagem(@RequestBody PersonagemResponseDTO personagemDTO) {
+        PersonagemResponseDTO savedPersonagem = personagemService.createPersonagem(personagemDTO);
+        return new ResponseEntity<>(savedPersonagem, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
@@ -47,7 +42,7 @@ public class PersonagemController {
         if (updatedPersonagem == null) {
             return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<>(updatedPersonagem, HttpStatus.OK);
+        return ResponseEntity.ok(updatedPersonagem);
     }
 
     @DeleteMapping("/{id}")

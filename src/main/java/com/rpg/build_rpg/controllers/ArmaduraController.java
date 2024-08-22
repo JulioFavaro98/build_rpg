@@ -21,46 +21,30 @@ public class ArmaduraController {
     @GetMapping("/armaduras")
     public ResponseEntity<List<Armadura>> getAllArmaduras(){
         List<Armadura> armaduras = armaduraService.getAllArmaduras();
-        return new ResponseEntity<>(armaduras, HttpStatus.OK);
+        return ResponseEntity.ok(armaduras);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Armadura> getArmaduraById(@PathVariable UUID id){
         Optional<Armadura> armadura = armaduraService.getArmaduraById(id);
-        return armadura.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(armadura.get());
     }
 
     @PostMapping
-    public ResponseEntity<?> createArmadura(@RequestBody Armadura armadura){
-        try {
-            Armadura novaArmadura = armaduraService.createArmadura(armadura);
-            return new ResponseEntity<>(novaArmadura, HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<Armadura> createArmadura(@RequestBody Armadura armadura){
+        Armadura novaArmadura = armaduraService.createArmadura(armadura);
+        return new ResponseEntity<>(novaArmadura, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateArmadura(@PathVariable UUID id, @RequestBody Armadura armadura){
-        try {
-            armaduraService.updateArmadura(id, armadura);
-            return ResponseEntity.ok("Armadura Atualizada com Sucesso!");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro: " + e.getMessage());
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao atualizar armadura: " + e.getMessage());
-        }
+    public ResponseEntity<Armadura> updateArmadura(@PathVariable UUID id, @RequestBody Armadura armadura){
+        Armadura armaduraAtualizada = armaduraService.updateArmadura(id, armadura);
+        return ResponseEntity.ok(armaduraAtualizada);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteArmadura(@PathVariable UUID id){
-        try {
-            armaduraService.deleteArmadura(id);
-            return ResponseEntity.ok("Armadura deletada com SUCESSO!");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro: " + e.getMessage());
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao deletar armadura: " + e.getMessage());
-        }
+    public ResponseEntity<Void> deleteArmadura(@PathVariable UUID id){
+        armaduraService.deleteArmadura(id);
+        return ResponseEntity.noContent().build();
     }
 }
