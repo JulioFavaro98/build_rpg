@@ -9,6 +9,7 @@ Este projeto é um sistema de criação de personagens para um jogo de RPG, dese
 * PostgreSQL: Banco de dados relacional.
 * Hibernate: Framework de mapeamento objeto-relacional (ORM).
 * Lombok: Biblioteca para reduzir o boilerplate de código.
+* Flyway: Biblioteca para versionamento e gerenciamento de migrações de banco de dados.
 
 ## Configuração do Projeto
 * 1 - Clone o repositório 
