@@ -4,6 +4,7 @@ import com.rpg.build_rpg.entities.enums.Classe;
 import com.rpg.build_rpg.entities.enums.Raca;
 import com.rpg.build_rpg.entities.enums.Sexo;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,15 +25,19 @@ public class Personagem {
     private UUID id;
 
     @Column(nullable = false, unique = true)
+    @NotNull(message = "O NOME do PERSONAGEM é OBRIGATÓRIO.")
     private String nome;
 
     @Column(nullable = false)
+    @NotNull(message = "O SEXO do PERSONAGEM é OBRIGATÓRIO.")
     private Sexo sexo;
 
     @Column(nullable = false)
+    @NotNull(message = "A RAÇA do PERSONAGEM é OBRIGATÓRIA.")
     private Raca raca;
 
     @Column(nullable = false)
+    @NotNull(message = "A CLASSE do PERSONAGEM é OBRIGATÓRIA.")
     private Classe classe;
 
     @ManyToOne(fetch = FetchType.LAZY)
