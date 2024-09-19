@@ -2,6 +2,7 @@ package com.rpg.build_rpg.controllers;
 
 import com.rpg.build_rpg.entities.Armadura;
 import com.rpg.build_rpg.services.ArmaduraService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,13 +32,13 @@ public class ArmaduraController {
     }
 
     @PostMapping
-    public ResponseEntity<Armadura> createArmadura(@RequestBody Armadura armadura){
+    public ResponseEntity<Armadura> createArmadura(@Valid @RequestBody Armadura armadura){
         Armadura novaArmadura = armaduraService.createArmadura(armadura);
         return new ResponseEntity<>(novaArmadura, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Armadura> updateArmadura(@PathVariable UUID id, @RequestBody Armadura armadura){
+    public ResponseEntity<Armadura> updateArmadura(@Valid @RequestBody Armadura armadura, @PathVariable UUID id){
         Armadura armaduraAtualizada = armaduraService.updateArmadura(id, armadura);
         return ResponseEntity.ok(armaduraAtualizada);
     }

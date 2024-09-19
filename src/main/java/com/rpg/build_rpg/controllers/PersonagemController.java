@@ -2,6 +2,7 @@ package com.rpg.build_rpg.controllers;
 
 import com.rpg.build_rpg.entities.DTOs.PersonagemResponseDTO;
 import com.rpg.build_rpg.services.PersonagemService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,13 +32,13 @@ public class PersonagemController {
     }
 
     @PostMapping
-    public ResponseEntity<PersonagemResponseDTO> createPersonagem(@RequestBody PersonagemResponseDTO personagemDTO) {
+    public ResponseEntity<PersonagemResponseDTO> createPersonagem(@Valid @RequestBody PersonagemResponseDTO personagemDTO) {
         PersonagemResponseDTO savedPersonagem = personagemService.createPersonagem(personagemDTO);
         return new ResponseEntity<>(savedPersonagem, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PersonagemResponseDTO> updatePersonagem(@PathVariable UUID id, @RequestBody PersonagemResponseDTO personagemDTO) {
+    public ResponseEntity<PersonagemResponseDTO> updatePersonagem(@Valid @RequestBody PersonagemResponseDTO personagemDTO, @PathVariable UUID id) {
         PersonagemResponseDTO updatedPersonagem = personagemService.updatePersonagem(id, personagemDTO);
         if (updatedPersonagem == null) {
             return ResponseEntity.notFound().build();

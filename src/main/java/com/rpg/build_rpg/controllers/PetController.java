@@ -2,6 +2,7 @@ package com.rpg.build_rpg.controllers;
 
 import com.rpg.build_rpg.entities.Pet;
 import com.rpg.build_rpg.services.PetService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,13 +32,13 @@ public class PetController {
     }
 
     @PostMapping
-    public ResponseEntity<Pet> createPet(@RequestBody Pet pet){
+    public ResponseEntity<Pet> createPet(@Valid @RequestBody Pet pet){
         Pet novoPet = petService.createPet(pet);
         return new ResponseEntity<>(novoPet, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Pet> updatePet(@PathVariable UUID id, @RequestBody Pet pet) {
+    public ResponseEntity<Pet> updatePet(@Valid @RequestBody Pet pet, @PathVariable UUID id) {
         Pet petAtualizado = petService.updatePet(id, pet);
         return ResponseEntity.ok(petAtualizado);
     }

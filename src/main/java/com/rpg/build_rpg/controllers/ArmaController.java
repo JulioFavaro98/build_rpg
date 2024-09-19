@@ -2,6 +2,7 @@ package com.rpg.build_rpg.controllers;
 
 import com.rpg.build_rpg.entities.Arma;
 import com.rpg.build_rpg.services.ArmaService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,13 +32,13 @@ public class ArmaController {
     }
 
     @PostMapping
-    public ResponseEntity<Arma> createArma(@RequestBody Arma arma) {
+    public ResponseEntity<Arma> createArma(@Valid @RequestBody Arma arma) {
         Arma novaArma = armaService.createArma(arma);
         return new ResponseEntity<>(novaArma, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Arma> updateArma(@PathVariable UUID id, @RequestBody Arma arma) {
+    public ResponseEntity<Arma> updateArma(@Valid @RequestBody Arma arma, @PathVariable UUID id) {
         Arma armaAtualizada = armaService.updateArma(id, arma);
         return ResponseEntity.ok(armaAtualizada);
     }
