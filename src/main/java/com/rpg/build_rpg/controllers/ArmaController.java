@@ -27,8 +27,8 @@ public class ArmaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Arma> getArmaById(@PathVariable UUID id) {
-        Optional<Arma> arma = armaService.getArmaById(id);
-        return ResponseEntity.ok(arma.get());
+        Arma arma = armaService.getArmaById(id);
+        return ResponseEntity.ok(arma);
     }
 
     @PostMapping
@@ -47,6 +47,5 @@ public class ArmaController {
     public ResponseEntity<Void> deleteArma(@PathVariable UUID id) {
         armaService.deleteArma(id);
         return ResponseEntity.noContent().build();
-
     }
 }

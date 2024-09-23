@@ -27,8 +27,8 @@ public class ArmaduraController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Armadura> getArmaduraById(@PathVariable UUID id){
-        Optional<Armadura> armadura = armaduraService.getArmaduraById(id);
-        return ResponseEntity.ok(armadura.get());
+        Armadura armadura = armaduraService.getArmaduraById(id);
+        return ResponseEntity.ok(armadura);
     }
 
     @PostMapping
