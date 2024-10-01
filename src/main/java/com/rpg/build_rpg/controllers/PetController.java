@@ -27,8 +27,8 @@ public class PetController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Pet> getPetById(@PathVariable UUID id){
-        Optional<Pet> pet = petService.getPetById(id);
-        return ResponseEntity.ok(pet.get());
+        Pet pet = petService.getPetById(id);
+        return ResponseEntity.ok(pet);
     }
 
     @PostMapping

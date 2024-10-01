@@ -1,6 +1,7 @@
 package com.rpg.build_rpg.controllers;
 
 import com.rpg.build_rpg.entities.DTOs.PersonagemResponseDTO;
+import com.rpg.build_rpg.entities.Personagem;
 import com.rpg.build_rpg.services.PersonagemService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,9 @@ public class PersonagemController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PersonagemResponseDTO> getPersonagemById(@PathVariable UUID id) {
-        Optional<PersonagemResponseDTO> personagem = personagemService.getPersonagemById(id);
-        return ResponseEntity.ok(personagem.get());
+        Personagem personagem = personagemService.getPersonagemById(id);
+        PersonagemResponseDTO response = personagemService.convertToDTO(personagem);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
@@ -48,9 +50,7 @@ public class PersonagemController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePersonagem(@PathVariable UUID id) {
-        if (!personagemService.deletePersonagem(id)) {
-            return ResponseEntity.notFound().build();
-        }
+        personagemService.deletePersonagem(id);
         return ResponseEntity.noContent().build();
     }
 }

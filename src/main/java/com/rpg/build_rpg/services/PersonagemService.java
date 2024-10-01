@@ -5,6 +5,8 @@ import com.rpg.build_rpg.entities.DTOs.PersonagemResponseDTO;
 import com.rpg.build_rpg.entities.Personagem;
 import com.rpg.build_rpg.entities.Arma;
 import com.rpg.build_rpg.entities.Pet;
+import com.rpg.build_rpg.infra.exceptions.ItemAlreadyExistsException;
+import com.rpg.build_rpg.infra.exceptions.ItemNotFoundException;
 import com.rpg.build_rpg.repositories.ArmaduraRepository;
 import com.rpg.build_rpg.repositories.PersonagemRepository;
 import com.rpg.build_rpg.repositories.ArmaRepository;
@@ -41,15 +43,15 @@ public class PersonagemService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<PersonagemResponseDTO> getPersonagemById(UUID id) {
+    public Personagem getPersonagemById(UUID id) {
         Optional<Personagem> personagem = personagemRepository.findById(id);
-        return personagem.map(this::convertToDTO);
+        return personagem.orElseThrow(() -> new ItemNotFoundException("Personagem não encontrado! Id: " + id));
     }
 
     public PersonagemResponseDTO createPersonagem(PersonagemResponseDTO personagemDTO) {
         Personagem personagem = convertToEntity(personagemDTO);
         if(personagemRepository.findByNome(personagem.getNome()).isPresent()) {
-            throw new IllegalArgumentException("Já existe um personagem com o nome " + personagem.getNome());
+            throw new ItemAlreadyExistsException("Já existe um personagem com o nome " + personagem.getNome());
         }
         Personagem savedPersonagem = personagemRepository.save(personagem);
         return convertToDTO(savedPersonagem);
@@ -67,15 +69,15 @@ public class PersonagemService {
         return convertToDTO(updatedPersonagem);
     }
 
-    public boolean deletePersonagem(UUID id) {
-        if (!personagemRepository.existsById(id)) {
-            return false;
+    public void deletePersonagem(UUID id) {
+        if(personagemRepository.existsById(id)) {
+            personagemRepository.deleteById(id);
+        } else {
+            throw new ItemNotFoundException("Personagem não encontrado! Id: " + id);
         }
-        personagemRepository.deleteById(id);
-        return true;
     }
 
-    private PersonagemResponseDTO convertToDTO(Personagem personagem) {
+    public PersonagemResponseDTO convertToDTO(Personagem personagem) {
         PersonagemResponseDTO dto = new PersonagemResponseDTO();
         dto.setNome(personagem.getNome());
         dto.setSexo(personagem.getSexo().name());

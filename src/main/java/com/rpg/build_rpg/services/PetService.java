@@ -1,6 +1,8 @@
 package com.rpg.build_rpg.services;
 
 import com.rpg.build_rpg.entities.Pet;
+import com.rpg.build_rpg.infra.exceptions.ItemAlreadyExistsException;
+import com.rpg.build_rpg.infra.exceptions.ItemNotFoundException;
 import com.rpg.build_rpg.repositories.PetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,38 +21,34 @@ public class PetService {
         return petRepository.findAll();
     }
 
+    public Pet getPetById(UUID id) {
+        Optional<Pet> pet = petRepository.findById(id);
+        return pet.orElseThrow(() -> new ItemNotFoundException("Pet não encontrado! Id: " + id));
+    }
+
     public Pet createPet(Pet pet) {
         if(petRepository.findByNome(pet.getNome()).isPresent()){
-            throw new IllegalArgumentException("Já existe um pet com o nome " + pet.getNome());
+            throw new ItemAlreadyExistsException("Já existe um pet com o nome " + pet.getNome());
         }
         return petRepository.save(pet);
     }
 
-    public Optional<Pet> getPetById(UUID id) {
-        Optional<Pet> pet = petRepository.findById(id);
-        return pet;
-    }
-
     public Pet updatePet(UUID id, Pet petAtualizado) {
-        try {
-            Pet pet = getPetById(id)
-                    .orElseThrow(()-> new IllegalArgumentException("Pet não encontrado!"));
-            pet.setNome(petAtualizado.getNome());
-            pet.setDescricao(petAtualizado.getDescricao());
-            pet.setDano(petAtualizado.getDano());
-            pet.setDefesa(petAtualizado.getDefesa());
+        Pet pet = getPetById(id);
 
-            return petRepository.save(pet);
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao atualizar o pet: " + e.getMessage());
-        }
+        pet.setNome(petAtualizado.getNome());
+        pet.setDescricao(petAtualizado.getDescricao());
+        pet.setDano(petAtualizado.getDano());
+        pet.setDefesa(petAtualizado.getDefesa());
+
+        return petRepository.save(pet);
     }
 
     public void deletePet(UUID id) {
         if (petRepository.existsById(id)) {
             petRepository.deleteById(id);
         } else {
-            throw new IllegalArgumentException("Pet não encontrado com o id fornecido.");
+            throw new ItemNotFoundException("Pet não encontrado! Id: " + id);
         }
     }
 }
